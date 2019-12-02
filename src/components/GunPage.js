@@ -1,38 +1,28 @@
 import { Page } from "./Page";
 import React, { useState, useEffect } from "react";
+import { useGun, getPub, getId } from "nicks-gun-utils";
 
 const Gun = require("gun/gun");
+require("gun/sea");
 
-const getId = element => element && element["_"]["#"];
-
-const useRerender = () => {
-  const [, setRender] = useState({});
-  const rerender = () => setRender({});
-  return rerender;
-};
-
-export const GunPage = ({ id }) => {
+export const GunPage = ({ id, priv, epriv }) => {
   const [gun, setGun] = useState(null);
-  const rerender = useRerender();
+  const pub = getPub(id);
+  const pair = pub && priv && { pub, priv, epriv };
+  const [data, onData] = useGun(Gun, useState, pair);
 
   useEffect(() => {
     const gun = Gun({
       peers: ["https://gunjs.herokuapp.com/gun"]
     });
+    gun.get(id).on(onData);
     setGun(gun);
   }, []);
-
-  useEffect(() => {
-    if (gun) {
-      gun.get(id).on(rerender);
-    }
-  }, [gun]);
 
   if (!gun) {
     return <div>Loading...</div>;
   }
 
-  const data = gun._.graph;
   const page = { ...data[id] };
 
   return <Page getId={getId} page={page} />;

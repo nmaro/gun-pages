@@ -1,33 +1,27 @@
-import React, { useRef } from "react";
+import React, { useEffect } from "react";
 import { hot } from "react-hot-loader/root";
 import { GunPage } from "./components/GunPage";
 
-require("gun/lib/open");
-
 const App = () => {
-  const newId = useRef(null);
-
   const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get("page");
+  const id = urlParams.get("id");
+  const hashUrlParams = new URLSearchParams(window.location.hash.substr(1));
+  const priv = hashUrlParams.get("priv");
+  const epriv = hashUrlParams.get("epriv");
+
+  useEffect(() => {
+    if (!id) {
+      window.location = `https://gun-create.nmaro.now.sh?next=${encodeURIComponent(
+        window.location.origin
+      )}`;
+    }
+  }, []);
 
   if (!id) {
-    return (
-      <div className="new-page">
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            if (newId.current.value) {
-              window.location.href = `${window.location.origin}?page=${newId.current.value}`;
-            }
-          }}
-        >
-          <input ref={newId} placeholder="Page ID e.g. helloworld" />
-        </form>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  return <GunPage id={id} />;
+  return <GunPage id={id} priv={priv} epriv={epriv} />;
 };
 
 export default hot(App);
