@@ -3,6 +3,7 @@ import { stringify } from "qs";
 
 import MD from "markdown-it";
 import WikiLinks from "markdown-it-wikilinks";
+import { getPub } from "nicks-gun-utils";
 
 const s = (o, p) => {
   const object = {};
@@ -16,15 +17,17 @@ const s = (o, p) => {
 };
 
 export const Page = ({ id, page, priv, epriv }) => {
+  const pub = getPub(id);
+  const title = page.title || id;
   useEffect(() => {
-    document.title = page.title;
-  }, [page.title]);
+    document.title = title;
+  }, [title]);
   const hash = s({ priv, epriv }, "#");
   const [md, setMd] = useState();
   useEffect(() => {
     const md = MD().use(
       WikiLinks({
-        baseURL: `?id=${id}.`,
+        baseURL: `?id=${pub ? `${pub}.` : ""}`,
         uriSuffix: hash,
         makeAllLinksAbsolute: true,
         postProcessPageName: pageName => encodeURIComponent(pageName.trim())
@@ -38,7 +41,14 @@ export const Page = ({ id, page, priv, epriv }) => {
   }
   return (
     <div className="page">
-      <h1>{page.title}</h1>
+      <a
+        className="edit"
+        href={`https://gun-preview.nmaro.now.sh?id=${id}${hash}`}
+        target="_blank"
+      >
+        edit
+      </a>
+      <h1>{title}</h1>
       <div
         className="markdown"
         dangerouslySetInnerHTML={{
