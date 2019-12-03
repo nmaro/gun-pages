@@ -41,16 +41,15 @@ export const Page = ({ id, page, priv, epriv }) => {
   }
   return (
     <div className="page">
-      {!pub ||
-        (priv && (
-          <a
-            className="edit"
-            href={`https://gun-preview.nmaro.now.sh?id=${id}${hash}`}
-            target="_blank"
-          >
-            edit
-          </a>
-        ))}
+      {(!pub || priv) && (
+        <a
+          className="edit"
+          href={`https://gun-preview.nmaro.now.sh?id=${id}${hash}`}
+          target="_blank"
+        >
+          edit
+        </a>
+      )}
       <h1>{title}</h1>
       <div
         className="markdown"
