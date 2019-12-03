@@ -27,7 +27,7 @@ export const Page = ({ id, page, priv, epriv }) => {
   useEffect(() => {
     const md = MD().use(
       WikiLinks({
-        baseURL: `?id=${pub ? `${pub}.` : ""}`,
+        baseURL: `?id=${pub ? `~${pub}.` : ""}`,
         uriSuffix: hash,
         makeAllLinksAbsolute: true,
         postProcessPageName: pageName => encodeURIComponent(pageName.trim())
