@@ -18,7 +18,10 @@ const s = (o, p) => {
 
 export const Page = ({ id, page, priv, epriv }) => {
   const pub = getPub(id);
-  const title = page.title || id;
+  const title =
+    page.title ||
+    id.replace(`~${pub}.`, "").replace(`~${pub}`, "") ||
+    "No Title";
   useEffect(() => {
     document.title = title;
   }, [title]);
