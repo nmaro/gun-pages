@@ -25,5 +25,5 @@ export const GunPage = ({ id, priv, epriv }) => {
 
   const page = { ...data[id] };
 
-  return <Page getId={getId} page={page} />;
+  return <Page getId={getId} id={id} page={page} priv={priv} epriv={epriv} />;
 };
