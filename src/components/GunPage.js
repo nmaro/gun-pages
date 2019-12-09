@@ -1,11 +1,16 @@
 import { Page } from "./Page";
 import React, { useState, useEffect } from "react";
-import { useGun, getPub, getId } from "nicks-gun-utils";
+import { useGun, getPub } from "nicks-gun-utils";
 
 const Gun = require("gun/gun");
 require("gun/sea");
+require("gun/sea");
+require("gun/lib/radix");
+require("gun/lib/radisk");
+require("gun/lib/store");
+require("gun/lib/rindexed");
 
-export const GunPage = ({ id, priv, epriv }) => {
+export const GunPage = ({ base, id, priv, epriv }) => {
   const [gun, setGun] = useState(null);
   const pub = getPub(id);
   const pair = pub && priv && { pub, priv, epriv };
@@ -13,7 +18,11 @@ export const GunPage = ({ id, priv, epriv }) => {
 
   useEffect(() => {
     const gun = Gun({
-      peers: ["https://gunjs.herokuapp.com/gun"]
+      localStorage: false,
+      peers: [
+        "https://gunjs.herokuapp.com/gun",
+        "https://nicks-gun-server.herokuapp.com/gun"
+      ]
     });
     gun.get(id).on(onData);
     setGun(gun);
@@ -25,5 +34,5 @@ export const GunPage = ({ id, priv, epriv }) => {
 
   const page = { ...data[id] };
 
-  return <Page getId={getId} id={id} page={page} priv={priv} epriv={epriv} />;
+  return <Page base={base} id={id} page={page} priv={priv} epriv={epriv} />;
 };

@@ -42,3 +42,8 @@ html,
   font-size: 90%;
   text-decoration: none;
 }
+
+ul {
+  padding-left: 1rem;
+  list-style-type: disc;
+}

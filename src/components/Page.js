@@ -16,12 +16,9 @@ const s = (o, p) => {
   return stringified ? `${p}${stringified}` : "";
 };
 
-export const Page = ({ id, page, priv, epriv }) => {
+export const Page = ({ id, base, page, priv, epriv }) => {
   const pub = getPub(id);
-  const title =
-    page.title ||
-    id.replace(`~${pub}.`, "").replace(`~${pub}`, "") ||
-    "No Title";
+  const title = page.title;
   useEffect(() => {
     document.title = title;
   }, [title]);
@@ -30,10 +27,18 @@ export const Page = ({ id, page, priv, epriv }) => {
   useEffect(() => {
     const md = MD().use(
       WikiLinks({
-        baseURL: `?id=${pub ? `~${pub}.` : ""}`,
+        baseURL: `${base}?id=`,
         uriSuffix: hash,
         makeAllLinksAbsolute: true,
-        postProcessPageName: pageName => encodeURIComponent(pageName.trim())
+        postProcessPageName: pageName => {
+          pageName = pageName.trim();
+          if (pageName === "/") {
+            pageName = "";
+          } else {
+            pageName = `.${pageName}`;
+          }
+          return encodeURIComponent((pub ? `~${pub}` : "") + pageName);
+        }
       })
     );
     setMd(md);
