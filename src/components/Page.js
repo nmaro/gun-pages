@@ -1,20 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { stringify } from "qs";
 
-import MD from "markdown-it";
-import WikiLinks from "markdown-it-wikilinks";
-import { getPub } from "nicks-gun-utils";
-
-const s = (o, p) => {
-  const object = {};
-  for (const key of Object.keys(o)) {
-    if (o[key]) {
-      object[key] = o[key];
-    }
-  }
-  const stringified = stringify(object);
-  return stringified ? `${p}${stringified}` : "";
-};
+import { getPub, getMd, qs } from "nicks-gun-utils";
 
 export const Page = ({ id, base, page, priv, epriv }) => {
   const pub = getPub(id);
@@ -22,27 +8,9 @@ export const Page = ({ id, base, page, priv, epriv }) => {
   useEffect(() => {
     document.title = title;
   }, [title]);
-  const hash = s({ priv, epriv }, "#");
+  const hash = qs({ priv, epriv }, "#");
   const [md, setMd] = useState();
-  useEffect(() => {
-    const md = MD().use(
-      WikiLinks({
-        baseURL: `${base}?id=`,
-        uriSuffix: hash,
-        makeAllLinksAbsolute: true,
-        postProcessPageName: pageName => {
-          pageName = pageName.trim();
-          if (pageName === "/") {
-            pageName = "";
-          } else {
-            pageName = `.${pageName}`;
-          }
-          return encodeURIComponent((pub ? `~${pub}` : "") + pageName);
-        }
-      })
-    );
-    setMd(md);
-  }, [id]);
+  useEffect(() => setMd(getMd({ pub, hash, base })), [id]);
 
   if (!md) {
     return <div>Loading...</div>;
